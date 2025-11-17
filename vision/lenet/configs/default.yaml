@@ -1,6 +1,6 @@
 # TODO hyperparams
 seed: 42
-device: "cpu"    # or "cuda"
+
 data:
   root: "data"
   batch_size: 128

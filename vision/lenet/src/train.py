@@ -72,7 +72,9 @@ def main():
     cfg = yaml.safe_load(args.config.read_text())
 
     set_seed(cfg.get("seed", 42))
-    device = torch.device(cfg.get("device", "cpu"))
+
+    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+    print("Using device:", device)
 
     out_path = Path(cfg["train"]["ckpt_path"])
     out_path.parent.mkdir(parents=True, exist_ok=True)

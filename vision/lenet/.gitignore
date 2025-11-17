@@ -1,19 +1,10 @@
-# Python
 __pycache__/
 .ipynb_checkpoints/
-
-# Data
 data/
 
-# Training outputs (ignore everything)
 outputs/*
+!outputs/*.png   # keep only PNGs
 
-# BUT keep images for README
-!outputs/*.png
-
-# Model checkpoints
 *.pt
 *.ckpt
-
-# Venv
 .venv/
