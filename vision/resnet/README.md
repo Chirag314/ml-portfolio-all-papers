@@ -92,6 +92,27 @@ Final run:
 - This suggests that **our ResNet-18 initialization + augmentations** favored Adam’s adaptive updates.
 - Running a **learning-rate sweep for SGD (0.1 / 0.05 / 0.01)** would help verify if SGD can catch up with the right LR.
 
+### Weight Decay Sweep (Adam Optimizer, CIFAR-10, 20 epochs)
+
+| Weight Decay | Train Acc | Val Acc | Best Val Acc |
+|--------------|-----------|---------|--------------|
+| **0**        | **0.944** | **0.891** | **0.894** |
+| **1e-4**     | 0.920     | 0.869     | 0.882     |
+| **5e-4**     | 0.889     | 0.840     | 0.859     |
+
+### Observations
+
+- **Lower weight decay produced significantly better validation accuracy.**
+- With `wd = 0`, the model reached **best_val = 0.894**, outperforming all other settings.
+- Higher weight decay values (`1e-4` and `5e-4`) caused **underfitting**, seen in:
+  - lower train accuracy  
+  - lower validation accuracy  
+- Adam often benefits from **lower L2 regularization**, because Adam’s adaptive updates already provide implicit regularization.
+- This experiment clearly shows the classic bias–variance trend:
+  - **wd=0** → lower bias, higher variance → best generalization in this setup  
+  - **wd=5e-4** → over-regularized → worse generalization  
+
+This gives a strong “experiment + interpretation” section you can talk about in interviews.
 
 
 ## Training Curves

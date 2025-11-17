@@ -1,0 +1,24 @@
+seed: 42
+device: "auto"      
+
+data:
+  root: "data"
+  batch_size: 128
+  num_workers: 2
+  augment: true
+  val_split: 0.1
+
+model:
+  num_classes: 10
+
+train:
+  epochs: 20
+  lr: 0.001
+  momentum: 0.9       # unused by Adam, kept for consistency
+  weight_decay: 0.0   # <-- no weight decay
+  optimizer: "adam"
+  log_interval: 50
+  ckpt_path: "outputs/best_adam_wd0.pt"
+
+eval:
+  ckpt_path: "outputs/best_adam_wd0.pt"
