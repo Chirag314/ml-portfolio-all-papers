@@ -1,15 +1,19 @@
-
----
-
-### 3.3. `vision/lenet/.gitignore`
-
-```txt
+# Python
 __pycache__/
-.ipynb_checkpoints
-.DS_Store
-.vscode/
-.venv/
+.ipynb_checkpoints/
+
+# Data
 data/
-outputs/
+
+# Training outputs (ignore everything)
+outputs/*
+
+# BUT keep images for README
+!outputs/*.png
+
+# Model checkpoints
 *.pt
 *.ckpt
+
+# Venv
+.venv/

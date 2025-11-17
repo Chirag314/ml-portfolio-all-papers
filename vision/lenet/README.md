@@ -56,3 +56,12 @@ Training run:
 
 ```text
 [epoch 5] train_acc=0.977  eval_acc=0.980  best=0.980
+
+## Training Curves
+
+### Loss
+![Loss Curve](outputs/loss.png)
+
+### Accuracy
+![Accuracy Curve](outputs/acc.png)
+
