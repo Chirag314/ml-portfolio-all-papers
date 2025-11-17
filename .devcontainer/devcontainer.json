@@ -1,0 +1,7 @@
+{
+  "name": "ml-portfolio",
+  "build": { "dockerfile": "Dockerfile" },
+  "customizations": { "vscode": { "settings": {"python.defaultInterpreterPath": "/usr/local/bin/python"}, "extensions": ["ms-python.python","ms-toolsai.jupyter","ms-azuretools.vscode-docker","ms-python.black-formatter"]}},
+  "postCreateCommand": "pip install -r requirements.txt && pip install pre-commit && pre-commit install",
+  "remoteUser": "vscode"
+}

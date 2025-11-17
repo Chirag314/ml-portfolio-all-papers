@@ -1,0 +1,6 @@
+#!/usr/bin/env python3
+import argparse, pathlib
+README = "# {name}\n\n> **Type**: experiment\n>\n> Brief: {brief}\n"
+TRAIN = "print('experiment train stub')\n"; EVAL = "print('experiment eval stub')\n"
+
+def main():\n    ap = argparse.ArgumentParser()\n    ap.add_argument('--path', required=True)\n    ap.add_argument('--name', required=True)\n    ap.add_argument('--brief', default='TODO')\n    args = ap.parse_args()\n    base = pathlib.Path(args.path)\n    for d in ['data','outputs','notebooks','configs','src']:\n        (base/d).mkdir(parents=True, exist_ok=True)\n    (base/'README.md').write_text(README.format(name=args.name, brief=args.brief))\n    (base/'configs'/'default.yaml').write_text('# TODO\n')\n    (base/'src'/'__init__.py').write_text('')\n    (base/'src'/'train.py').write_text(TRAIN)\n    (base/'src'/'eval.py').write_text(EVAL)\n    (base/'requirements.txt').write_text('# Optional per-exp extras\n')\n    print('Created experiment at', base)\n\nif __name__=='__main__':\n    main()\n

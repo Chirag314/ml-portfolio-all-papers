@@ -1,0 +1,8 @@
+{
+  "name": "ml-portfolio-cuda",
+  "build": { "dockerfile": "Dockerfile" },
+  "runArgs": ["--gpus=all"],
+  "customizations": {"vscode": {"settings": {"python.defaultInterpreterPath": "/usr/bin/python3"}, "extensions": ["ms-python.python","ms-toolsai.jupyter","ms-azuretools.vscode-docker","ms-python.black-formatter"]}},
+  "postCreateCommand": "pip install -r requirements.txt && pip install pre-commit && pre-commit install",
+  "remoteUser": "root"
+}

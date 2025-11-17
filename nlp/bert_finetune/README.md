@@ -1,0 +1,1 @@
+# BERT fine-tuning (2018)\nLink: https://arxiv.org/abs/1810.04805\n\n## Why it matters\n- TODO\n\n## Key ideas / math\n- TODO\n\n## Implementation plan\n- [ ] Dataset: TODO\n- [ ] Components: TODO\n- [ ] Training / loss: TODO\n- [ ] Metrics: TODO\n\n## Run\n```bash\npython -m src.train --config configs/default.yaml\n```\n
