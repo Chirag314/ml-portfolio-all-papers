@@ -55,7 +55,7 @@ Config file: `configs/default.yaml`.
 
 From repo root:
 
-```bash
+
 cd vision/resnet
 
 # create and activate venv (Windows)
@@ -78,7 +78,6 @@ Training config (baseline):
 
 Final run:
 
-```text
 [epoch 20] train_acc=0.867  val_acc=0.822  best_val=0.824
 
 ## Training Curves
@@ -88,4 +87,3 @@ Final run:
 
 ### Accuracy
 ![Accuracy](outputs/acc.png)
-

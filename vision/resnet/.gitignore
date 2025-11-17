@@ -3,7 +3,9 @@ __pycache__/
 
 data/
 
+# Ignore everything in outputs...
 outputs/*
+# ...except PNG plots that we want in the README
 !outputs/*.png
 
 *.pt
