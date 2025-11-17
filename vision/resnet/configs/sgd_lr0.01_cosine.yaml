@@ -1,0 +1,29 @@
+seed: 42
+device: "auto"      # ignored; we use torch.cuda.is_available() in code
+
+data:
+  root: "data"
+  batch_size: 128
+  num_workers: 2
+  augment: true
+  val_split: 0.1
+
+model:
+  num_classes: 10
+
+train:
+  epochs: 20
+  lr: 0.01             # best SGD LR from your sweep
+  momentum: 0.9
+  weight_decay: 0.0005
+  optimizer: "sgd"
+  log_interval: 50
+  ckpt_path: "outputs/best_sgd_lr0.01_cosine.pt"
+
+scheduler:
+  name: "cosine"
+  t_max: 20            # usually = num epochs
+  eta_min: 0.0001      # min LR at end of schedule
+
+eval:
+  ckpt_path: "outputs/best_sgd_lr0.01_cosine.pt"

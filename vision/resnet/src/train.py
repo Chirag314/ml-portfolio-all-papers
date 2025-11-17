@@ -14,6 +14,7 @@ from common.seed import set_seed
 from common.logging import init_loggers
 from .data import get_loaders
 from .model import resnet18
+from torch.optim.lr_scheduler import CosineAnnealingLR
 
 
 def parse_args():
@@ -101,6 +102,15 @@ def main():
             weight_decay=cfg["train"]["weight_decay"],
         )
 
+        # Optional LR scheduler
+    scheduler = None
+    sched_cfg = cfg.get("scheduler", {})
+    if sched_cfg.get("name", "").lower() == "cosine":
+        t_max = sched_cfg.get("t_max", cfg["train"]["epochs"])
+        eta_min = sched_cfg.get("eta_min", 0.0)
+        scheduler = CosineAnnealingLR(opt, T_max=t_max, eta_min=eta_min)
+        print(f"Using CosineAnnealingLR: T_max={t_max}, eta_min={eta_min}")
+
     criterion = nn.CrossEntropyLoss()
     hist = {"train_loss": [], "train_acc": [], "val_loss": [], "val_acc": []}
     best_val = 0.0
@@ -168,9 +178,16 @@ def main():
         if val_acc > best_val:
             best_val = val_acc
             torch.save({"model": model.state_dict(), "cfg": cfg}, out_path)
+            # Step LR scheduler at end of epoch
+        if scheduler is not None:
+            scheduler.step()
 
         print(
             f"[epoch {epoch}] train_acc={train_acc:.3f} val_acc={val_acc:.3f} best_val={best_val:.3f}"
+        )
+        current_lr = opt.param_groups[0]["lr"]
+        print(
+            f"[epoch {epoch}] lr={current_lr:.6f} train_acc={train_acc:.3f} val_acc={val_acc:.3f} best_val={best_val:.3f}"
         )
 
     out_dir = Path("outputs")

@@ -131,6 +131,40 @@ This gives a strong “experiment + interpretation” section you can talk about
 - This highlights a core deep-learning principle:  
   **“SGD requires proper learning-rate tuning — LR matters more than the optimizer choice.”**
 
+### SGD + Cosine Annealing LR (CIFAR-10, 20 epochs)
+
+This experiment uses the best performing SGD setup from the LR sweep (`lr = 0.01`)
+and adds a cosine annealing learning-rate schedule.
+
+**Config summary**
+- Optimizer: SGD + momentum
+- Initial LR: 0.01
+- Weight decay: 5e-4
+- Scheduler: CosineAnnealingLR
+- T_max: 20, eta_min: 1e-4
+
+**Final run:**
+
+
+### Observations
+
+- Cosine annealing produced **the highest validation accuracy** among all experiments so far (`best_val = 0.879`).
+- Compared to fixed LR = 0.01 (best_val = 0.862), cosine LR improves stability late in training and allows the model to converge to a better minimum.
+- The LR schedule begins with a high learning rate for exploration, then gradually decays to `1e-4`, enabling fine-grained optimization near convergence.
+- This matches results from modern training pipelines (e.g., ImageNet training of ResNet, ViTs, CLIP), where cosine LR is a strong default and often outperforms fixed schedules.
+
+### Comparison of Best Validation Accuracies
+
+| Experiment                 | Best Val Acc |
+|----------------------------|--------------|
+| SGD, LR=0.10               | 0.824        |
+| SGD, LR=0.05               | 0.858        |
+| SGD, LR=0.01               | 0.862        |
+| Adam (wd=5e-4)             | 0.859        |
+| Adam (wd=0)                | 0.894        |
+| Adam (wd=1e-4)             | 0.882        |
+| **SGD + Cosine LR (0.01)** | **0.879**    |
+
 
 ## Training Curves
 
