@@ -15,3 +15,11 @@ make new-paper PATH=vision/resnet TITLE="Deep Residual Learning (2015)" CITATION
 
 make new-exp PATH=experiments/my_exp NAME="My Exp" BRIEF="Quick idea"
 ```
+### Vision
+
+- **LeNet-5 on MNIST** (`vision/lenet/`)  
+  Re-implementation of *Gradient-Based Learning Applied to Document Recognition* (LeCun et al., 1998).  
+  - Classic CNN with Tanh + AvgPool  
+  - MNIST training pipeline with SGD+momentum, weight decay, and basic logging  
+  - Achieves ~98% test accuracy in 5 epochs on CPU  
+  - Includes plots and test to verify model output shape
