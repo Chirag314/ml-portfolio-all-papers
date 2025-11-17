@@ -1,0 +1,24 @@
+seed: 42
+device: "auto"      # we'll ignore this and use torch.cuda.is_available()
+
+data:
+  root: "data"
+  batch_size: 128
+  num_workers: 2
+  augment: true
+  val_split: 0.1
+
+model:
+  num_classes: 10
+
+train:
+  epochs: 20
+  lr: 0.001        # typical Adam LR
+  momentum: 0.9    # unused for Adam but kept for consistency
+  weight_decay: 0.0005
+  optimizer: "adam"     # <-- key difference
+  log_interval: 50
+  ckpt_path: "outputs/best_adam.pt"
+
+eval:
+  ckpt_path: "outputs/best_adam.pt"

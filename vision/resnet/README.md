@@ -78,7 +78,21 @@ Training config (baseline):
 
 Final run:
 
-[epoch 20] train_acc=0.867  val_acc=0.822  best_val=0.824
+### Optimizer comparison (20 epochs, CIFAR-10)
+
+| Optimizer | LR     | Weight Decay | Epochs | Best Val Acc |
+|-----------|--------|--------------|--------|--------------|
+| SGD       | 0.10   | 5e-4         | 20     | 0.824        |
+| Adam      | 0.001  | 5e-4         | 20     | 0.859        |
+
+### Observations
+
+- **Adam outperformed SGD** in this setup (`best_val: 0.859 vs 0.824`), despite SGD being traditionally stronger on CIFAR-like tasks.
+- Adam converged faster and reached higher validation accuracy with a lower learning rate (`1e-3`).
+- This suggests that **our ResNet-18 initialization + augmentations** favored Adam’s adaptive updates.
+- Running a **learning-rate sweep for SGD (0.1 / 0.05 / 0.01)** would help verify if SGD can catch up with the right LR.
+
+
 
 ## Training Curves
 
