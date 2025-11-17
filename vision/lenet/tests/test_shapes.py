@@ -1,5 +1,12 @@
-import torch
+import sys
+from pathlib import Path
 
+# Ensure the lenet folder (which contains src/) is on sys.path
+LENET_ROOT = Path(__file__).resolve().parents[1]
+if str(LENET_ROOT) not in sys.path:
+    sys.path.insert(0, str(LENET_ROOT))
+
+import torch
 from src.model import LeNet5
 
 

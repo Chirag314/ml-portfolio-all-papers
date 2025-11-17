@@ -9,46 +9,44 @@
 ## Why this paper matters
 
 - One of the earliest successful **convolutional neural networks** for vision.
-- Established the pattern: `Conv → Nonlinearity → Pooling → Fully Connected`.
-- Historically important for handwritten digit recognition (MNIST) and a great
-  “hello world” for image CNNs in an ML portfolio.
+- Introduced the classic pattern: `Conv → Nonlinearity → Pooling → Fully Connected`.
+- Historically important for handwritten digit recognition (MNIST) and a perfect
+  “hello world” CNN for an ML engineering portfolio.
 
 ---
 
 ## Implementation details
 
-**Model**
+### Model
 
-- Architecture: LeNet-5 (simplified connectivity)
+LeNet-5 (simplified connectivity):
 
-  - C1: `Conv2d(1 → 6, kernel=5, stride=1, padding=2)`
-  - S2: `AvgPool2d(2×2)`  
-  - C3: `Conv2d(6 → 16, kernel=5, stride=1)`
-  - S4: `AvgPool2d(2×2)`
-  - C5: `Conv2d(16 → 120, kernel=5, stride=1)`
-  - F6: `Linear(120 → 84)`
-  - Output: `Linear(84 → 10)`
-  - Activation: **Tanh** after each conv / FC (as in the original paper).
+- C1: `Conv2d(1 → 6, kernel=5, stride=1, padding=2)`  → 28×28
+- S2: `AvgPool2d(2×2)` → 14×14
+- C3: `Conv2d(6 → 16, kernel=5, stride=1)` → 10×10
+- S4: `AvgPool2d(2×2)` → 5×5
+- C5: `Conv2d(16 → 120, kernel=5, stride=1)` → 1×1
+- F6: `Linear(120 → 84)`
+- Output: `Linear(84 → 10)`
+- Activation: **Tanh** after each conv / FC layer (matching the paper).
 
-- Partial connectivity in C3 from the paper is simplified to **full conv**
-  (common in modern LeNet re-implementations).
+> Note: the original paper used **partial connectivity** in C3.  
+> Here it is simplified to full convolution (standard in modern LeNet implementations).
 
-**Training setup**
+### Training setup
 
-- Dataset: **MNIST** (train: 60k, test: 10k)
-- Input: grayscale, 1×28×28
+- Dataset: **MNIST** (60k train, 10k test)
+- Input: grayscale `1×28×28`
 - Loss: `CrossEntropyLoss`
-- Optimizer (this run): **SGD + Momentum**
-
+- Optimizer: **SGD with momentum**
   - learning rate: `0.01`
   - momentum: `0.9`
   - weight decay: `5e-4`
-
 - Batch size: `128`
 - Epochs: `5`
-- Device: `cpu` (PyTorch CPU build)
+- Device: **CPU** (PyTorch CPU build)
 
-Config lives in: `configs/default.yaml`.
+Configuration lives in: `configs/default.yaml`.
 
 ---
 
