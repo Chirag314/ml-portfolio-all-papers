@@ -1,1 +1,22 @@
 # TODO hyperparams
+seed: 42
+device: "cuda"    # or "cpu"
+data:
+  root: "data"
+  batch_size: 128
+  num_workers: 2
+  augment: false
+model:
+  in_channels: 1
+  num_classes: 10
+train:
+  epochs: 5
+  lr: 0.01
+  momentum: 0.9
+  weight_decay: 0.0005
+  optimizer: "sgd"   # "sgd" or "adam"
+  log_interval: 100
+  ckpt_path: "outputs/best.pt"
+eval:
+  ckpt_path: "outputs/best.pt"
+
