@@ -1,1 +1,3 @@
 # Optional per-project extras
+# Optional per-project extras
+# (main deps come from ../../requirements.txt)

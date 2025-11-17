@@ -1,1 +1,25 @@
 # TODO hyperparams
+seed: 42
+
+
+data:
+  root: "data"
+  batch_size: 128
+  num_workers: 2
+  augment: true
+  val_split: 0.1   # 10% of train as validation
+
+model:
+  num_classes: 10
+
+train:
+  epochs: 20
+  lr: 0.1
+  momentum: 0.9
+  weight_decay: 0.0005
+  optimizer: "sgd"      # "sgd" or "adam"
+  log_interval: 50
+  ckpt_path: "outputs/best.pt"
+
+eval:
+  ckpt_path: "outputs/best.pt"
