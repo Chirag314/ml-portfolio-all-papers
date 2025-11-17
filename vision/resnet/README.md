@@ -114,6 +114,23 @@ Final run:
 
 This gives a strong “experiment + interpretation” section you can talk about in interviews.
 
+### SGD learning-rate sweep (CIFAR-10, 20 epochs, weight_decay = 5e-4)
+
+| Learning Rate | Train Acc | Val Acc | Best Val Acc |
+|---------------|-----------|---------|--------------|
+| **0.10**      | 0.867     | 0.822   | 0.824        |
+| **0.05**      | 0.903     | 0.858   | 0.858        |
+| **0.01**      | 0.920     | 0.854   | **0.862**    |
+
+### Observations
+
+- **LR = 0.01 achieved the best validation accuracy (0.862)**, outperforming higher learning rates and even Adam in this setup.
+- At **LR = 0.10**, training is fast but unstable → lower val accuracy.
+- At **LR = 0.05**, the model generalizes well but plateaus early.
+- At **LR = 0.01**, SGD converges more smoothly and reaches a better optimum within 20 epochs.
+- This highlights a core deep-learning principle:  
+  **“SGD requires proper learning-rate tuning — LR matters more than the optimizer choice.”**
+
 
 ## Training Curves
 

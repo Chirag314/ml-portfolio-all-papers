@@ -1,0 +1,24 @@
+seed: 42
+device: "auto"
+
+data:
+  root: "data"
+  batch_size: 128
+  num_workers: 2
+  augment: true
+  val_split: 0.1
+
+model:
+  num_classes: 10
+
+train:
+  epochs: 20
+  lr: 0.01             # <-- LR = 0.01
+  momentum: 0.9
+  weight_decay: 0.0005
+  optimizer: "sgd"
+  log_interval: 50
+  ckpt_path: "outputs/best_sgd_lr0.01.pt"
+
+eval:
+  ckpt_path: "outputs/best_sgd_lr0.01.pt"
