@@ -1,0 +1,192 @@
+import argparse
+import json
+from pathlib import Path
+
+import matplotlib.pyplot as plt
+import torch
+from torch import nn, optim
+from tqdm import tqdm
+import yaml
+
+from .path_setup import REPO_ROOT  # noqa: F401
+
+from common.seed import set_seed
+from common.logging import init_loggers
+from .data import get_loaders
+from .model import AlexNet
+
+
+def parse_args():
+    p = argparse.ArgumentParser()
+    p.add_argument("--config", type=Path, required=True)
+    p.add_argument("--use_wandb", action="store_true")
+    p.add_argument("--use_mlflow", action="store_true")
+    p.add_argument("--run_name", type=str, default="alexnet-cifar10")
+    return p.parse_args()
+
+
+def accuracy(logits, targets):
+    preds = logits.argmax(dim=1)
+    return (preds == targets).float().mean().item()
+
+
+def save_plots(history, out_dir: Path, title: str):
+    out_dir.mkdir(parents=True, exist_ok=True)
+
+    # Loss
+    plt.figure()
+    plt.plot(history["train_loss"], label="train")
+    plt.plot(history["val_loss"], label="val")
+    plt.xlabel("epoch")
+    plt.ylabel("loss")
+    plt.title(f"{title} — loss")
+    plt.legend()
+    plt.tight_layout()
+    plt.savefig(out_dir / "loss.png")
+    plt.close()
+
+    # Accuracy
+    plt.figure()
+    plt.plot(history["train_acc"], label="train")
+    plt.plot(history["val_acc"], label="val")
+    plt.xlabel("epoch")
+    plt.ylabel("accuracy")
+    plt.title(f"{title} — accuracy")
+    plt.legend()
+    plt.tight_layout()
+    plt.savefig(out_dir / "acc.png")
+    plt.close()
+
+
+def main():
+    args = parse_args()
+    cfg = yaml.safe_load(args.config.read_text())
+
+    set_seed(cfg.get("seed", 42))
+    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+    print("Using device:", device)
+
+    out_path = Path(cfg["train"]["ckpt_path"])
+    out_path.parent.mkdir(parents=True, exist_ok=True)
+
+    logger = init_loggers(
+        project="ml-portfolio",
+        run_name=args.run_name,
+        use_wandb=args.use_wandb,
+        use_mlflow=args.use_mlflow,
+        tags={"paper": "alexnet-cifar10", **cfg},
+    )
+
+    train_loader, val_loader, test_loader = get_loaders(
+        Path(cfg["data"]["root"]),
+        batch_size=cfg["data"]["batch_size"],
+        num_workers=cfg["data"]["num_workers"],
+        augment=cfg["data"].get("augment", True),
+        val_split=cfg["data"].get("val_split", 0.1),
+    )
+
+    model = AlexNet(num_classes=cfg["model"]["num_classes"]).to(device)
+
+    if cfg["train"]["optimizer"].lower() == "sgd":
+        opt = optim.SGD(
+            model.parameters(),
+            lr=cfg["train"]["lr"],
+            momentum=cfg["train"]["momentum"],
+            weight_decay=cfg["train"]["weight_decay"],
+        )
+    else:
+        opt = optim.Adam(
+            model.parameters(),
+            lr=cfg["train"]["lr"],
+            weight_decay=cfg["train"]["weight_decay"],
+        )
+
+    criterion = nn.CrossEntropyLoss()
+
+    history = {"train_loss": [], "train_acc": [], "val_loss": [], "val_acc": []}
+    best_val = 0.0
+
+    for epoch in range(1, cfg["train"]["epochs"] + 1):
+        # ---- train ----
+        model.train()
+        pbar = tqdm(train_loader, desc=f"Epoch {epoch}/{cfg['train']['epochs']}")
+        run_loss = 0.0
+        run_acc = 0.0
+        steps = 0
+
+        for step, (x, y) in enumerate(pbar, start=1):
+            x, y = x.to(device), y.to(device)
+            opt.zero_grad()
+            logits = model(x)
+            loss = criterion(logits, y)
+            loss.backward()
+            opt.step()
+
+            run_loss += loss.item()
+            run_acc += accuracy(logits.detach(), y)
+            steps += 1
+
+            if step % cfg["train"]["log_interval"] == 0:
+                pbar.set_postfix(
+                    loss=f"{run_loss / steps:.4f}",
+                    acc=f"{run_acc / steps:.3f}",
+                )
+
+        train_loss = run_loss / max(1, steps)
+        train_acc = run_acc / max(1, steps)
+
+        # ---- validation ----
+        model.eval()
+        val_loss_sum, val_correct, val_tot = 0.0, 0, 0
+        with torch.no_grad():
+            for x, y in val_loader:
+                x, y = x.to(device), y.to(device)
+                logits = model(x)
+                loss = criterion(logits, y)
+                val_loss_sum += loss.item() * x.size(0)
+                val_correct += (logits.argmax(1) == y).sum().item()
+                val_tot += x.size(0)
+
+        val_loss = val_loss_sum / val_tot
+        val_acc = val_correct / val_tot
+
+        history["train_loss"].append(train_loss)
+        history["train_acc"].append(train_acc)
+        history["val_loss"].append(val_loss)
+        history["val_acc"].append(val_acc)
+
+        if logger:
+            logger.log_metrics(
+                {
+                    "train/loss": train_loss,
+                    "train/acc": train_acc,
+                    "val/loss": val_loss,
+                    "val/acc": val_acc,
+                },
+                step=epoch,
+            )
+
+        if val_acc > best_val:
+            best_val = val_acc
+            torch.save(
+                {"model": model.state_dict(), "cfg": cfg},
+                out_path,
+            )
+
+        print(
+            f"[epoch {epoch}] train_acc={train_acc:.3f} val_acc={val_acc:.3f} best_val={best_val:.3f}"
+        )
+
+    out_dir = Path("outputs")
+    out_dir.mkdir(parents=True, exist_ok=True)
+    (out_dir / "history.json").write_text(
+        json.dumps(history, indent=2), encoding="utf-8"
+    )
+    save_plots(history, out_dir, "AlexNet on CIFAR-10")
+
+    if logger:
+        logger.finish()
+
+
+if __name__ == "__main__":
+    main()

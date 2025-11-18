@@ -1,0 +1,26 @@
+# Project uses shared dependencies from ../../requirements.txt
+# Put any AlexNet-specific extras here if needed.
+seed: 42
+device: "auto"      # we ignore this and use torch.cuda.is_available()
+
+data:
+  root: "data"
+  batch_size: 128
+  num_workers: 2
+  augment: true
+  val_split: 0.1
+
+model:
+  num_classes: 10
+
+train:
+  epochs: 30
+  lr: 0.01
+  momentum: 0.9
+  weight_decay: 0.0005
+  optimizer: "sgd"         # "sgd" or "adam"
+  log_interval: 50
+  ckpt_path: "outputs/best.pt"
+
+eval:
+  ckpt_path: "outputs/best.pt"

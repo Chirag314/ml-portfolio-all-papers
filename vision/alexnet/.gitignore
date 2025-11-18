@@ -1,0 +1,13 @@
+__pycache__/
+.ipynb_checkpoints/
+
+data/
+
+# Ignore all outputs but keep plots for README
+outputs/*
+!outputs/*.png
+
+*.pt
+*.ckpt
+
+.venv/
