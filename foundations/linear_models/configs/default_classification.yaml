@@ -1,0 +1,16 @@
+seed: 42
+
+data:
+  n_samples_per_class: 500
+  batch_size: 64
+  val_split: 0.2
+
+model:
+  n_features: 2
+
+train:
+  epochs: 100
+  lr: 0.1
+  optimizer: "sgd"
+  log_interval: 10
+  ckpt_path: "outputs/logistic.pt"
