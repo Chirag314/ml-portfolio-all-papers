@@ -1,0 +1,27 @@
+seed: 42
+
+env:
+  id: CartPole-v1
+
+dqn:
+  gamma: 0.99
+  lr: 1e-3
+  batch_size: 64
+  buffer_capacity: 50000
+  start_training: 1000      # steps of random exploration before updating
+  train_freq: 4             # update every n env steps
+  target_update_freq: 1000  # steps between target net updates
+  max_steps: 200000
+  eps_start: 1.0
+  eps_end: 0.05
+  eps_decay_steps: 50000
+
+network:
+  hidden_dim: 128
+
+logging:
+  eval_interval_episodes: 20
+  eval_episodes: 5
+  ckpt_path: "outputs/cartpole_dqn.pt"
+  history_path: "outputs/history.json"
+  reward_plot_path: "outputs/reward.png"
