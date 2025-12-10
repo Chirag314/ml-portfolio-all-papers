@@ -12,7 +12,11 @@ class QNetworkConfig:
 
 class QNetwork(nn.Module):
     """
-    Simple MLP Q-network for CartPole inspired by DQN paper artichitecture"""
+    Simple MLP Q-network for CartPole.
+
+    Input: state vector of shape (batch_size, obs_dim)
+    Output: Q-values of shape (batch_size, action_dim)
+    """
 
     def __init__(self, cfg: QNetworkConfig):
         super().__init__()
@@ -21,8 +25,12 @@ class QNetwork(nn.Module):
             nn.ReLU(),
             nn.Linear(cfg.hidden_dim, cfg.hidden_dim),
             nn.ReLU(),
-            nn.Linear(cfg.hidden_dim, cfg.hidden_dim),
+            nn.Linear(cfg.hidden_dim, cfg.action_dim),
         )
 
-    def fprward(self, x: torch.Tensor) -> torch.Tensor:
+    def forward(self, x: torch.Tensor) -> torch.Tensor:
+        """
+        x: (batch_size, obs_dim)
+        returns: (batch_size, action_dim)
+        """
         return self.net(x)
