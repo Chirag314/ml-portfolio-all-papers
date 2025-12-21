@@ -1,1 +1,29 @@
-# TODO hyperparams
+seed: 42
+
+data:
+  text_path: "data/tiny.txt"   # optional; if missing, uses built-in tiny corpus
+  block_size: 128
+  batch_size: 64
+
+model:
+  vocab_size: 0        # auto-filled from dataset
+  d_model: 192
+  n_heads: 6
+  n_layers: 4
+  d_ff: 768
+  dropout: 0.1
+
+train:
+  device: "cuda"       # "cuda" or "cpu"
+  lr: 3e-4
+  weight_decay: 0.01
+  steps: 2500
+  eval_interval: 250
+  eval_batches: 20
+  grad_clip: 1.0
+
+logging:
+  out_dir: "outputs"
+  loss_plot: "outputs/loss.png"
+  ckpt_path: "outputs/transformer_charlm.pt"
+  sample_path: "outputs/samples.txt"

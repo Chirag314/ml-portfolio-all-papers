@@ -1,1 +1,2 @@
-# Optional per-project extras
+# Uses ../../requirements.txt for core deps.
+# Add extra deps here if needed later.
