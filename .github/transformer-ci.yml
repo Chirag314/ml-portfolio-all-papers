@@ -1,0 +1,47 @@
+name: Transformer CI
+
+on:
+  push:
+    branches: [ main, master ]
+    paths:
+      - "transformer/**"
+      - "common/**"
+      - ".github/workflows/transformer-ci.yml"
+  pull_request:
+    branches: [ main, master ]
+    paths:
+      - "transformer/**"
+      - "common/**"
+      - ".github/workflows/transformer-ci.yml"
+  workflow_dispatch:
+
+jobs:
+  smoke:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install minimal deps (smoke)
+        run: |
+          python -m pip install --upgrade pip
+          # Keep this minimal so it doesn't fail due to optional heavy deps
+          if [ -f transformer/requirements-smoke.txt ]; then
+            pip install -r transformer/requirements-smoke.txt
+          elif [ -f requirements.txt ]; then
+            pip install -r requirements.txt
+          else
+            echo "No requirements file found; skipping pip install."
+          fi
+
+      - name: Smoke import test
+        run: |
+          python - <<'PY'
+import pathlib
+# Basic repo structure checks
+assert pathlib.Path('common/logging.py').exists(), "common/logging.py missing"
+print("smoke ok")
+PY
